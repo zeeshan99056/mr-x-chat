@@ -14,30 +14,42 @@ const usersList = document.getElementById('usersList');
 const userCount = document.getElementById('userCount');
 const typingIndicator = document.getElementById('typingIndicator');
 
-// Join chat
-joinBtn.addEventListener('click', joinChat);
-usernameInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') joinChat();
-});
-
+// Join chat function
 function joinChat() {
     const username = usernameInput.value.trim();
     if (username) {
         currentUsername = username;
-        loginModal.classList.add('hidden');
+        
+        // Modal ko hide karo
+        loginModal.style.display = 'none';  // YEH IMPORTANT LINE
+        
+        // Chat container dikhao
         chatContainer.classList.remove('hidden');
+        
+        // Server ko batao
         socket.emit('user-joined', username);
         
-        // Show welcome message
+        // Welcome message
         addMessage({
             username: 'System',
             message: `Welcome to Mr. Z's Chat, ${username}!`,
             timestamp: new Date().toLocaleTimeString()
         });
+    } else {
+        alert('Please enter your name!');
     }
 }
 
-// Send message
+// Event Listeners
+joinBtn.addEventListener('click', joinChat);
+
+usernameInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        joinChat();
+    }
+});
+
+// Send message function
 function sendMessage() {
     const message = messageInput.value.trim();
     if (message) {
@@ -47,15 +59,13 @@ function sendMessage() {
             timestamp: timestamp
         });
         
-        // Clear input
         messageInput.value = '';
-        
-        // Stop typing indicator
         socket.emit('typing', false);
     }
 }
 
 sendBtn.addEventListener('click', sendMessage);
+
 messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendMessage();
@@ -81,7 +91,6 @@ function addMessage(data) {
     const messageElement = document.createElement('div');
     messageElement.classList.add('message');
     
-    // Check if this is the current user's message
     if (data.username === currentUsername) {
         messageElement.classList.add('own-message');
     }
@@ -121,13 +130,6 @@ socket.on('users-list', (users) => {
     updateUsersList(users);
 });
 
-socket.on('user-joined', updateUsers);
-socket.on('user-left', updateUsers);
-
-function updateUsers() {
-    // This will be handled by the server sending the full list
-}
-
 function updateUsersList(users) {
     usersList.innerHTML = '';
     users.forEach(user => {
@@ -149,7 +151,7 @@ socket.on('user-typing', (data) => {
     }
 });
 
-// Helper function to escape HTML
+// Helper function
 function escapeHtml(unsafe) {
     return unsafe
         .replace(/&/g, "&amp;")
@@ -158,19 +160,3 @@ function escapeHtml(unsafe) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-
-// Reconnection handling
-socket.on('connect', () => {
-    console.log('Connected to server');
-    if (currentUsername) {
-        socket.emit('user-joined', currentUsername);
-    }
-});
-
-socket.on('disconnect', () => {
-    addMessage({
-        username: 'System',
-        message: 'Disconnected from server. Trying to reconnect...',
-        timestamp: new Date().toLocaleTimeString()
-    });
-});
