@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Z's Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2>Welcome to Mr. Z's Chat</h2>
+            <p>Please enter your name to continue</p>
+            <input type="text" id="usernameInput" placeholder="Your name" maxlength="30">
+            <button id="joinBtn">Join Chat</button>
+        </div>
+    </div>
+
+    <!-- Main Chat Interface -->
+    <div id="chatContainer" class="hidden">
+        <div class="header">
+            <h1>Mr. Z's Chat Screen</h1>
+            <div id="userCount"></div>
+        </div>
+        
+        <div class="users-sidebar">
+            <h3>Active Users</h3>
+            <div id="usersList"></div>
+        </div>
+        
+        <div class="chat-main">
+            <div id="messages" class="messages"></div>
+            
+            <div class="input-area">
+                <div class="typing-indicator" id="typingIndicator"></div>
+                <div class="input-container">
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="Type your message..."
+                        maxlength="500"
+                    >
+                    <button id="sendBtn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>
